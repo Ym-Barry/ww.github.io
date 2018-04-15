@@ -16,12 +16,12 @@
 <meta property="og:description" content="项目中要实现像今日头条一样的返回效果，当用户手指右滑时，当前屏幕显示的东西都向右移动，也就是UINavigationBar也要跟随当前的ViewController移动。移动后的位置露出要返回的界面，当移动到一定位置后，实现pop效果。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/pushAnimation.gif">
-<meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/UI%20hirerncy.jpg">
+<meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/UIhirerncy.jpg">
 <meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/UINavigationController.png">
 <meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/half.png">
 <meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/half-pan.png">
 <meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/UIWindow.jpg">
-<meta property="og:updated_time" content="2018-04-15T09:59:12.722Z">
+<meta property="og:updated_time" content="2018-04-15T10:09:47.383Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iOS右滑返回, UINavigationBar 跟随滑动实现">
 <meta name="twitter:description" content="项目中要实现像今日头条一样的返回效果，当用户手指右滑时，当前屏幕显示的东西都向右移动，也就是UINavigationBar也要跟随当前的ViewController移动。移动后的位置露出要返回的界面，当移动到一定位置后，实现pop效果。">
@@ -106,7 +106,7 @@
 <h4 id="如何解决"><a href="#如何解决" class="headerlink" title="如何解决"></a>如何解决</h4><p>###一 .  实现View和NavigationBar的整体移动</p>
 <p>如果能找到一个上级视图包含NavigationBar 和 controller的view ,那么用手指滑动这个视图，NavigationBar 和 UIView就会同时移动，当滑动到一定位置时再调用原生的pop方法。</p>
 <p>在xcode中截取一个UINavigationController的UI结构如图</p>
-<p><img src="http://7xlgnt.com1.z0.glb.clouddn.com/UI%20hirerncy.jpg" alt=""></p>
+<p><img src="http://7xlgnt.com1.z0.glb.clouddn.com/UIhirerncy.jpg" alt=""></p>
 <p>根据上图我们发现，红色的视图同时包含了NavigationBar和UIViewController的View，那么我们现在只需要拿到这个属性就可以了，很幸运，NavigationController的view属性就是这个值.</p>
 <p>那我们就先来定义一个继承于UINavigationController的YMNavigationController</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#import &lt;UIKit/UIKit.h&gt;</span><br><span class="line"></span><br><span class="line">@interface YMNavigationController : UINavigationController</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
@@ -150,7 +150,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://30coder.com/2018/04/15/iOS右滑返回-UINavigationBar-跟随滑动实现/" data-id="cjg0mvcy90000r1qjyfbliyw8" class="article-share-link">Share</a>
+      <a data-url="http://30coder.com/2018/04/15/iOS右滑返回-UINavigationBar-跟随滑动实现/" data-id="cjg0nfi0j0000tnqjmzsjqlri" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Objective-c-UINavigationController/">Objective-c, UINavigationController</a></li></ul>
