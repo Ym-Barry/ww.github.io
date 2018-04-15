@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>iOS右滑返回, UINavigationBar 跟随滑动实现 | 30Coder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="项目中要实现像今日头条一样的返回效果，当用户手指右滑时，当前屏幕显示的东西都向右移动，也就是UINavigationBar也要跟随当前的ViewController移动。移动后的位置露出要返回的界面，当移动到一定位置后，实现pop效果。">
+<meta name="keywords" content="Objective-c, UINavigationController">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS右滑返回, UINavigationBar 跟随滑动实现">
+<meta property="og:url" content="http://30coder.com/2018/04/15/iOS右滑返回-UINavigationBar-跟随滑动实现/index.html">
+<meta property="og:site_name" content="30Coder">
+<meta property="og:description" content="项目中要实现像今日头条一样的返回效果，当用户手指右滑时，当前屏幕显示的东西都向右移动，也就是UINavigationBar也要跟随当前的ViewController移动。移动后的位置露出要返回的界面，当移动到一定位置后，实现pop效果。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/pushAnimation.gif">
+<meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/UI%20hirerncy.jpg">
+<meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/UINavigationController.png">
+<meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/half.png">
+<meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/half-pan.png">
+<meta property="og:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/UIWindow.jpg">
+<meta property="og:updated_time" content="2018-04-15T09:59:12.722Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS右滑返回, UINavigationBar 跟随滑动实现">
+<meta name="twitter:description" content="项目中要实现像今日头条一样的返回效果，当用户手指右滑时，当前屏幕显示的东西都向右移动，也就是UINavigationBar也要跟随当前的ViewController移动。移动后的位置露出要返回的界面，当移动到一定位置后，实现pop效果。">
+<meta name="twitter:image" content="http://7xlgnt.com1.z0.glb.clouddn.com/pushAnimation.gif">
+  
+    <link rel="alternate" href="/atom.xml" title="30Coder" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">30Coder</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">开发小记</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://30coder.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-iOS右滑返回-UINavigationBar-跟随滑动实现" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/15/iOS右滑返回-UINavigationBar-跟随滑动实现/" class="article-date">
+  <time datetime="2018-04-15T09:53:21.000Z" itemprop="datePublished">2018-04-15</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      iOS右滑返回, UINavigationBar 跟随滑动实现
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>项目中要实现像今日头条一样的返回效果，当用户手指右滑时，当前屏幕显示的东西都向右移动，也就是UINavigationBar也要跟随当前的ViewController移动。移动后的位置露出要返回的界面，当移动到一定位置后，实现pop效果。</p>
+<a id="more"></a>
+<p>####原生UINavigationController  pop效果为什么不行</p>
+<p><img src="http://7xlgnt.com1.z0.glb.clouddn.com/pushAnimation.gif" alt="原生效果"></p>
+<p>如图效果，原生的操作是把ViewController的view压入到当前的导航界面，其动画只是view的位置变化动画，NavigationBar不会跟随，只是会根据当前的view信息来跟新自己的显示信息。</p>
+<h4 id="如何解决"><a href="#如何解决" class="headerlink" title="如何解决"></a>如何解决</h4><p>###一 .  实现View和NavigationBar的整体移动</p>
+<p>如果能找到一个上级视图包含NavigationBar 和 controller的view ,那么用手指滑动这个视图，NavigationBar 和 UIView就会同时移动，当滑动到一定位置时再调用原生的pop方法。</p>
+<p>在xcode中截取一个UINavigationController的UI结构如图</p>
+<p><img src="http://7xlgnt.com1.z0.glb.clouddn.com/UI%20hirerncy.jpg" alt=""></p>
+<p>根据上图我们发现，红色的视图同时包含了NavigationBar和UIViewController的View，那么我们现在只需要拿到这个属性就可以了，很幸运，NavigationController的view属性就是这个值.</p>
+<p>那我们就先来定义一个继承于UINavigationController的YMNavigationController</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#import &lt;UIKit/UIKit.h&gt;</span><br><span class="line"></span><br><span class="line">@interface YMNavigationController : UINavigationController</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@interface YMNavigationController ()</span><br><span class="line">@end</span><br><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">[super viewDidLoad];</span><br><span class="line">self.view.backgroundColor = [UIColor greenColor];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义两个UIViewController 加入到 YMNavigationController运行代码。视图结构如下：</p>
+<p><img src="http://7xlgnt.com1.z0.glb.clouddn.com/UINavigationController.png" alt=""></p>
+<p>选中UILayoutContainerView,其颜色确实变成了绿色.</p>
+<p>那接下来我们就为其加一个手势来实现移动。</p>
+<p>为了不跟系统的返回手势冲突，我们首先关闭系统的返回手势, 然后再添加自己的手势。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (void)viewDidLoad &#123;</span><br><span class="line">[super viewDidLoad];</span><br><span class="line">self.view.backgroundColor = [UIColor greenColor];</span><br><span class="line">self.interactivePopGestureRecognizer.enabled = NO;</span><br><span class="line">[self addPanGestureRecognizer];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (void)popViewController:(UIPanGestureRecognizer *)recognizer &#123;</span><br><span class="line"></span><br><span class="line">CGPoint transition = [recognizer translationInView:self.view]; //总共移动了多少位置</span><br><span class="line">if (transition.x &gt; 0) &#123;</span><br><span class="line">self.view.transform = CGAffineTransformMakeTranslation(transition.x, 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行，并尝试右滑，效果如下</p>
+<p><img src="http://7xlgnt.com1.z0.glb.clouddn.com/half.png" alt=""></p>
+<p>像上图一样，整体滑动的效果已经实现了。</p>
+<h3 id="二-显示上一级界面"><a href="#二-显示上一级界面" class="headerlink" title="二. 显示上一级界面"></a>二. 显示上一级界面</h3><p>如上图展现的那样，滑动的时候整个Navigation的界面都移动到了新位置，漏出了后面的UIWindow。</p>
+<p>我们想要在漏出的window上展示上一级界面，只要把要展示的界面放到window上就可以了，现在我们的任务就变成了如何获取上一级界面。</p>
+<p>上级界面其实就是上一次UILayoutContainerView的展示内容，我们只要把这个view保存下来加到window就可以了。想到了两种方法来保存上一级的view。</p>
+<ol>
+<li>复制view保存到数组中</li>
+<li>获取view的截图保存到数组中</li>
+</ol>
+<p>第一种方法使用了下面的函数去复制数组</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (UIView *)copyView:(UIView *)view&#123;</span><br><span class="line">NSData * tempArchive = [NSKeyedArchiver archivedDataWithRootObject:view];</span><br><span class="line">return [NSKeyedUnarchiver unarchiveObjectWithData:tempArchive];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>复制后的view在无法正常显示statusBar，没有想到办法去解决，所以就暂时放弃了。</p>
+<p>第二个方法使用OC截取屏幕并且保存在数组中，方法如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">- (NSMutableArray *)lastVCScreenShootArray &#123;</span><br><span class="line"></span><br><span class="line">if (!_lastVCScreenShootArray) &#123;</span><br><span class="line">_lastVCScreenShootArray = [[NSMutableArray alloc] initWithCapacity:0];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">return _lastVCScreenShootArray;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)takeScreenShoot&#123;</span><br><span class="line"></span><br><span class="line">UIGraphicsBeginImageContextWithOptions(self.view.bounds.size,NO,0);</span><br><span class="line">[self.view.layer renderInContext:UIGraphicsGetCurrentContext()];</span><br><span class="line">UIImage * newScreenSnapImg = UIGraphicsGetImageFromCurrentImageContext();</span><br><span class="line">UIGraphicsEndImageContext();</span><br><span class="line">[self.lastVCScreenShootArray addObject:newScreenSnapImg];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那我们什么时候去截取屏幕呢，当然是在push的时候了。在代码中重载一下push方法，在其加入截屏的方法就ok了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//重载系统方法</span><br><span class="line">- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated &#123;</span><br><span class="line"></span><br><span class="line">[self takeScreenShoot];</span><br><span class="line">[super pushViewController:viewController animated:animated];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在我们就把这个截图添加到window上，这时候我们需要一个UIImageView来显示这个截图。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">//通过懒加载的方法，创建一个UIImageView，并且加到Window的最底层</span><br><span class="line"></span><br><span class="line">- (UIImageView *)lastVCScreenShootImageView &#123;</span><br><span class="line"></span><br><span class="line">if (!_lastVCScreenShootImageView) &#123;</span><br><span class="line"></span><br><span class="line">UIImageView *shootImageView = [[UIImageView alloc] init];</span><br><span class="line">shootImageView.frame = self.view.bounds;</span><br><span class="line">[self.view.superview addSubview:shootImageView];     //self.view.super = [UIApplication window] keyWIndow]</span><br><span class="line">[self.view.superview insertSubview:shootImageView atIndex:0];</span><br><span class="line">_lastVCScreenShootImageView = shootImageView;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">return _lastVCScreenShootImageView;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>滑动时我们调用方法把上面的UIImageView加上去</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (void)popViewController:(UIPanGestureRecognizer *)recognizer &#123;</span><br><span class="line"></span><br><span class="line">CGPoint transition = [recognizer translationInView:self.view];</span><br><span class="line">if (transition.x &gt; 0) &#123;</span><br><span class="line">self.view.transform = CGAffineTransformMakeTranslation(transition.x, 0);</span><br><span class="line">self.lastVCScreenShootImageView.image = [self.lastVCScreenShootArray lastObject];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行效果</p>
+<p><img src="http://7xlgnt.com1.z0.glb.clouddn.com/half-pan.png" alt=""></p>
+<p>效果已经出现了，但是看上去特别奇怪，因为两个NavigationBar重合在了一起，我们给它加一个过度层效果，一个透明图变化的图层就好了，window上的布局顺序 </p>
+<p>[截图， 过渡层， UIVigationController 界面 ]</p>
+<p><img src="http://7xlgnt.com1.z0.glb.clouddn.com/UIWindow.jpg" alt=""></p>
+<p>剩下的事情就是当用户停止滑动时，根据滑动的位置来决定是否调用原生的pop以及后续UINavigationController的view还原到原始位置。</p>
+<p><a href="http://7xlgnt.com1.z0.glb.clouddn.com/Land.zip" target="_blank" rel="noopener">最终代码下载</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://30coder.com/2018/04/15/iOS右滑返回-UINavigationBar-跟随滑动实现/" data-id="cjg0mvcy90000r1qjyfbliyw8" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Objective-c-UINavigationController/">Objective-c, UINavigationController</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Objective-c-UINavigationController/">Objective-c, UINavigationController</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Objective-c-UINavigationController/" style="font-size: 10px;">Objective-c, UINavigationController</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/04/15/iOS右滑返回-UINavigationBar-跟随滑动实现/">iOS右滑返回, UINavigationBar 跟随滑动实现</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Wangwei<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
